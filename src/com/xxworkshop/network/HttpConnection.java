@@ -125,11 +125,6 @@ public final class HttpConnection {
             try {
                 HttpURLConnection connection;
                 if (request.method.equals(HttpMethod.Post)) {
-                    if (request.isEncodePostContent) {
-                        for (String key : request.params.keySet()) {
-                            request.params.put(key, URLEncoder.encode(request.params.get(key)));
-                        }
-                    }
                     sparams = F.map2String(request.params, "=", "&");
                     connection = (HttpURLConnection) (new URL(surl)).openConnection();
                     connection.setDoInput(true);

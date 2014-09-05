@@ -20,7 +20,6 @@ public class Request {
     public boolean useCache = false;
     public int cacheTimeout = HttpConnection.DefaultCacheTimeout;
     public boolean isAsynchronized = true;
-    public boolean isEncodePostContent = false;
 
     public Request(String url) {
         this.url = url;
@@ -123,16 +122,6 @@ public class Request {
      */
     public Request setAsynchronized(boolean isAsynchronized) {
         this.isAsynchronized = isAsynchronized;
-        return this;
-    }
-
-    /**
-     * 设置post方式提交时，内容是否需要做urlencode
-     * @param isEncodePostContent
-     * @return
-     */
-    public Request setEncodePostContent(boolean isEncodePostContent) {
-        this.isEncodePostContent = isEncodePostContent;
         return this;
     }
 }
