@@ -12,6 +12,7 @@ import com.xxworkshop.network.decoder.Decoder;
 import com.xxworkshop.network.decoder.TextDecoder;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -130,8 +131,8 @@ public final class HttpConnection {
                     connection.setDoInput(true);
                     connection.setDoOutput(true);
                     connection.setRequestMethod(request.method);
-                    connection.setConnectTimeout(5000);
-                    connection.setReadTimeout(10000);
+                    connection.setConnectTimeout(request.connectTimeout);
+                    connection.setReadTimeout(request.readTimeout);
                     if (SessionEnabled && !cookie.equals("")) {
                         connection.setRequestProperty("Cookie", cookie);
                     }
@@ -151,14 +152,14 @@ public final class HttpConnection {
                     osw.close();
                 } else {
                     for (String key : request.params.keySet()) {
-                        request.params.put(key, URLEncoder.encode(request.params.get(key)));
+                        request.params.put(key, URLEncoder.encode(request.params.get(key), "UTF-8"));
                     }
                     sparams = F.map2String(request.params, "=", "&");
                     String fullurl = surl + "?" + sparams;
                     connection = (HttpURLConnection) (new URL(fullurl)).openConnection();
                     connection.setDoInput(true);
-                    connection.setConnectTimeout(5000);
-                    connection.setReadTimeout(10000);
+                    connection.setConnectTimeout(request.connectTimeout);
+                    connection.setReadTimeout(request.readTimeout);
                     if (SessionEnabled && !cookie.equals("")) {
                         connection.setRequestProperty("Cookie", cookie);
                     }
@@ -182,11 +183,13 @@ public final class HttpConnection {
                 int statusCode = connection.getResponseCode();
                 if (statusCode >= 200 && statusCode < 400) {
                     Object result = null;
+                    InputStream is = connection.getInputStream();
                     if (request.decoder == null) {
-                        result = defaultDecoder.decode(connection.getInputStream());
+                        result = defaultDecoder.decode(is);
                     } else {
-                        result = request.decoder.decode(connection.getInputStream());
+                        result = request.decoder.decode(is);
                     }
+                    is.close();
                     connection.disconnect();
 
                     if (Debug) {
@@ -194,16 +197,19 @@ public final class HttpConnection {
                     }
 
                     // cache
-                    if (result != null) {
-                        if (caches.containsKey(cacheKey)) {
-                            CacheItem ci = caches.get(cacheKey);
-                            ci.content = result;
-                            ci.timestamp = S.getTimeStamp();
-                        } else {
-                            CacheItem ci = new CacheItem();
-                            ci.content = result;
-                            ci.timestamp = S.getTimeStamp();
-                            caches.put(cacheKey, ci);
+                    // TODO 调整缓存策略，先缓存大小，还是限制数量
+                    if (request.useCache) {
+                        if (result != null) {
+                            if (caches.containsKey(cacheKey)) {
+                                CacheItem ci = caches.get(cacheKey);
+                                ci.content = result;
+                                ci.timestamp = S.getTimeStamp();
+                            } else {
+                                CacheItem ci = new CacheItem();
+                                ci.content = result;
+                                ci.timestamp = S.getTimeStamp();
+                                caches.put(cacheKey, ci);
+                            }
                         }
                     }
 

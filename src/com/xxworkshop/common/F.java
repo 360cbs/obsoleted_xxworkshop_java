@@ -5,7 +5,7 @@
 
 package com.xxworkshop.common;
 
-import com.sun.org.apache.xml.internal.security.utils.Base64;
+import org.apache.commons.codec.binary.Base64;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +46,7 @@ public final class F {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             GZIPOutputStream gos = new GZIPOutputStream(baos);
             byte[] buffer = new byte[2048];
-            int readSize = 0;
+            int readSize;
             while (-1 != (readSize = bais.read(buffer, 0, buffer.length))) {
                 gos.write(buffer, 0, readSize);
             }
@@ -86,7 +86,12 @@ public final class F {
     }
 
     public final static String base64Encode(byte[] data) {
-        return Base64.encode(data);
+        return base64Encode(data, false);
+    }
+
+    public final static String base64Encode(byte[] data, boolean urlSafe) {
+        Base64 base64 = new Base64(urlSafe);
+        return base64.encodeToString(data);
     }
 
     public final static String zipAndBaseEncode2(byte[] data) {

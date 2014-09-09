@@ -20,6 +20,8 @@ public class Request {
     public boolean useCache = false;
     public int cacheTimeout = HttpConnection.DefaultCacheTimeout;
     public boolean isAsynchronized = true;
+    public int connectTimeout = 5000;
+    public int readTimeout = 10000;
 
     public Request(String url) {
         this.url = url;
@@ -27,6 +29,7 @@ public class Request {
 
     /**
      * 设置访问地址
+     *
      * @param url
      * @return
      */
@@ -37,6 +40,7 @@ public class Request {
 
     /**
      * 设置提交参数
+     *
      * @param params
      * @return
      */
@@ -47,6 +51,7 @@ public class Request {
 
     /**
      * 设置访问方式Get/Post
+     *
      * @param method
      * @return
      */
@@ -57,6 +62,7 @@ public class Request {
 
     /**
      * 设置自定义请求头部
+     *
      * @param headers
      * @return
      */
@@ -67,6 +73,7 @@ public class Request {
 
     /**
      * 设置请求发送时的编码
+     *
      * @param encoding
      * @return
      */
@@ -77,6 +84,7 @@ public class Request {
 
     /**
      * 设置响应解析器
+     *
      * @param decoder
      * @return
      */
@@ -87,6 +95,7 @@ public class Request {
 
     /**
      * 设置响应回调函数
+     *
      * @param responseHandler
      * @return
      */
@@ -97,6 +106,7 @@ public class Request {
 
     /**
      * 设置是否使用缓存
+     *
      * @param useCache
      * @return
      */
@@ -107,6 +117,7 @@ public class Request {
 
     /**
      * 设置缓存时间
+     *
      * @param cacheTimeout
      * @return
      */
@@ -117,11 +128,32 @@ public class Request {
 
     /**
      * 设置同步/异步请求
+     *
      * @param isAsynchronized
      * @return
      */
     public Request setAsynchronized(boolean isAsynchronized) {
         this.isAsynchronized = isAsynchronized;
+        return this;
+    }
+
+    /**
+     * 设置连接超时时间
+     *
+     * @param connectTimeout
+     */
+    public Request setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+        return this;
+    }
+
+    /**
+     * 设置读取超时时间
+     *
+     * @param readTimeout
+     */
+    public Request setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
         return this;
     }
 }
