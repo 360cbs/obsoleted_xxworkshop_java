@@ -152,10 +152,13 @@ public final class HttpConnection {
                     osw.close();
                 } else {
                     for (String key : request.params.keySet()) {
-                        request.params.put(key, URLEncoder.encode(request.params.get(key), "UTF-8"));
+                        request.params.put(key, URLEncoder.encode(request.params.get(key), request.encoding));
                     }
                     sparams = F.map2String(request.params, "=", "&");
-                    String fullurl = surl + "?" + sparams;
+                    String fullurl = surl;
+                    if (sparams != null && sparams.length() > 0) {
+                        fullurl += "?" + sparams;
+                    }
                     connection = (HttpURLConnection) (new URL(fullurl)).openConnection();
                     connection.setDoInput(true);
                     connection.setConnectTimeout(request.connectTimeout);
@@ -173,16 +176,19 @@ public final class HttpConnection {
 
                 if (SessionEnabled) {
                     cookieUpdated = false;
-                    String tcookie = connection.getHeaderField("Set-Cookie");
-                    if (tcookie != null && !tcookie.equals("")) {
-                        cookie = tcookie;
-                        cookieUpdated = true;
+                    String key;
+                    for (int i = 1; (key = connection.getHeaderFieldKey(i)) != null; i++) {
+                        if (key.equalsIgnoreCase("set-cookie")) {
+                            cookie = connection.getHeaderField(i);
+                            cookie = cookie.substring(0, cookie.indexOf(";"));
+                            cookieUpdated = true;
+                        }
                     }
                 }
 
                 int statusCode = connection.getResponseCode();
                 if (statusCode >= 200 && statusCode < 400) {
-                    Object result = null;
+                    Object result;
                     InputStream is = connection.getInputStream();
                     if (request.decoder == null) {
                         result = defaultDecoder.decode(is);
