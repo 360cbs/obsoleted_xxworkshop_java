@@ -6,6 +6,7 @@ package com.xxworkshop.network;
 
 import com.xxworkshop.network.decoder.Decoder;
 import com.xxworkshop.network.decoder.TextDecoder;
+import com.xxworkshop.network.header.HttpMethod;
 
 import java.util.Hashtable;
 

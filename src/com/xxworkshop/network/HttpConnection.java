@@ -10,8 +10,8 @@ import com.xxworkshop.common.L;
 import com.xxworkshop.common.S;
 import com.xxworkshop.network.decoder.Decoder;
 import com.xxworkshop.network.decoder.TextDecoder;
+import com.xxworkshop.network.header.HttpMethod;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -227,7 +227,7 @@ public final class HttpConnection {
                     Message message = new Message(0, response);
                     handleMessage(message);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 response = new Response(request, 499, null);
                 Message message = new Message(0, response);

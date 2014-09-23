@@ -3,7 +3,7 @@
  * Created by Broche Xu on 9/2/14 11:48 AM.
  */
 
-package com.xxworkshop.network;
+package com.xxworkshop.network.header;
 
 public final class HttpMethod {
     public final static String Post = "POST";
